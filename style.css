@@ -35,14 +35,29 @@ html {
     justify-content: center;
     align-items: center;
 }
-
 .wrapper {
-    flex-direction: column;
-    max-width: 1920px;
-    background-color: red;
-    border-top: 3px solid black;
-    width: 100%;
+  flex-direction: column;
+  max-width: 1920px;
+  width: 100%;
+  border-top: 3px solid black;
+  background: linear-gradient(
+    to right,
+    #FFCB05 0%,      /* Pokémon Yellow */ 
+    #3D7DCA 33%,     /* Pokémon Blue */ 
+    #003A70 66%,     /* Pokémon Navy Blue */
+    #FFCB05 100%     /* und zurück zu Gelb */
+  );
+  background-size: 200% 100%; /* für längere Übergänge */
+  animation: gradientShift 10s ease infinite; /* animierte Bewegung */
 }
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
 
 .spinner-container {
   position: fixed;
