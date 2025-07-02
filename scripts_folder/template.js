@@ -47,3 +47,68 @@ function getMiniCardTemplate(pokemon) {
     </div>
   `;
 }
+
+function getBigCardTemplate(pokemon, weaknessText, evo1, evo2, evo3) {
+  return `
+    <div class="flex-standard big-card">
+   <div class="close-btn" onclick="closeBigCard()">×</div>
+      <div class="img-name-id-big">
+        <div class="card-body-img">
+          <img src="${pokemon.sprites.other['official-artwork'].front_default}" class="card-img-top" alt="${pokemon.name}">
+        </div>
+           
+        <div class="card-body">
+          <h5 class="card-title">
+            <p class="name-of-pokemon">${pokemon.name.toUpperCase()}</p>
+            <div id="index-of-pokemon">(# ${pokemon.id})</div>
+          </h5>
+        </div>
+      </div>
+
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <img class="svg-mini-card" src="./assets/image/heart.svg" alt="heart">
+          <p id="health"> HP: ${pokemon.stats[0].base_stat}</p>
+        </li>
+        <li class="list-group-item">
+          <img class="svg-mini-card" src="./assets/image/sword.svg" alt="sword">
+          <p id="force"> ATK: ${pokemon.stats[1].base_stat}</p>
+        </li>
+        <li class="list-group-item">
+          <img class="svg-mini-card" src="./assets/image/shield.svg" alt="shield">
+          <p id="protection"> DEF: ${pokemon.stats[2].base_stat}</p>
+        </li>
+      </ul>
+
+     <div class="big-right-skills">
+      <p class="weak">Weekness:</p>
+        <p class="weak">${weaknessText}</p>
+        <div class="evo">
+             
+          <div class="evo-entry">
+          <div class="evo-title">
+            <p class="evo-title-text">&nbsp;&nbsp;EVOLUTION:</p>
+            </div>
+            <img src="${evo1.img}" class="evo-img" alt="${evo1.name}">
+            <p class="evo-name">${evo1.name.toUpperCase()}</p>
+         
+          <div class="evo-entry">
+            <img src="${evo2.img}" class="evo-img" alt="${evo2.name}">
+            <p class="evo-name">${evo2.name.toUpperCase()}</p>
+          </div>
+          <div class="evo-entry">
+            <img src="${evo3.img}" class="evo-img" alt="${evo3.name}">
+            <p class="evo-name">${evo3.name.toUpperCase()}</p>
+          </div>
+        </div>
+      </div>
+
+ <div class="btn-change-overlay-img">
+  <button class="btn btn-outline-primary" onclick="showPreviousPokemon(${pokemon.id})">LAST</button>
+  <button class="btn btn-outline-light" onclick="showNextPokemon(${pokemon.id})">NEXT</button>
+</div>
+
+
+  </div>
+  `;
+}
