@@ -48,8 +48,8 @@ function renderFilteredCards(filteredPokemons) {
 window.addEventListener("load", async () => {
   renderHeader();
   renderFooter();
-  await loadAllPokemonList();           // <-- NEU
-  await loadInitPokemonsWithSpinner();  // lädt nur die ersten 20
+  await loadAllPokemonList();           // <-- NEW
+  await loadInitPokemonsWithSpinner();  // loading first 20 PKM
   renderMiniCard();
   initSearch();
 });
