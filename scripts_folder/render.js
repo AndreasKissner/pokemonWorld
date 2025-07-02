@@ -44,3 +44,12 @@ function renderFilteredCards(filteredPokemons) {
     container.insertAdjacentHTML("beforeend", miniCard);
   }
 }
+
+window.addEventListener("load", async () => {
+  renderHeader();
+  renderFooter();
+  await loadAllPokemonList();           // <-- NEU
+  await loadInitPokemonsWithSpinner();  // lädt nur die ersten 20
+  renderMiniCard();
+  initSearch();
+});
