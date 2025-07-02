@@ -1,0 +1,65 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <title>Pokémon Spinner – perfekt rund</title>
+  <desc>Ein runder, animierter Pokéball-Spinner mit Puls und Rotation.</desc>
+
+  <g id="pokeball-group" transform="translate(2.5 2.5) scale(0.95)">
+    <!-- Schwarzer äußerer Rahmen -->
+    <circle cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="10" />
+
+    <!-- Obere rote Hälfte -->
+    <path d="M5,50 a45,45 0 0,1 90,0" fill="#DC0A2D" />
+
+    <!-- Untere weiße Hälfte -->
+    <path d="M95,50 a45,45 0 0,1 -90,0" fill="white" />
+
+    <!-- Trennlinie -->
+    <line x1="5" y1="50" x2="95" y2="50" stroke="black" stroke-width="6" />
+
+    <!-- Mittelknopf -->
+    <circle id="center-button" cx="50" cy="50" r="15" fill="white" stroke="black" stroke-width="10">
+      <animate
+        attributeName="r"
+        values="15; 16; 15"
+        dur="1.5s"
+        repeatCount="indefinite"
+        calcMode="spline"
+        keyTimes="0; 0.5; 1"
+        keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
+      />
+      <animate
+        attributeName="stroke-width"
+        values="4; 6; 4"
+        dur="1.5s"
+        repeatCount="indefinite"
+        calcMode="spline"
+        keyTimes="0; 0.5; 1"
+        keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
+      />
+    </circle>
+
+    <!-- Innerer schwarzer Punkt -->
+    <circle id="inner-dot" cx="50" cy="50" r="5" fill="black">
+      <animate
+        attributeName="fill"
+        values="black; #444; #999; #444; black"
+        dur="2s"
+        repeatCount="indefinite"
+        calcMode="spline"
+        keyTimes="0; 0.25; 0.5; 0.75; 1"
+        keySplines="0.8 0.2 0.2 0.8; 0.8 0.2 0.2 0.8; 0.8 0.2 0.2 0.8; 0.8 0.2 0.2 0.8"
+      />
+    </circle>
+
+    <!-- Gesamtdrehung -->
+    <animateTransform
+      attributeName="transform"
+      attributeType="XML"
+      type="rotate"
+      from="0 50 50"
+      to="360 50 50"
+      dur="2s"
+      repeatCount="indefinite"
+      additive="sum"
+    />
+  </g>
+</svg>

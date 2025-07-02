@@ -1,0 +1,7 @@
+# Ignore standard files
+assets/ligthmokup.html
+erledigt.txt
+
+# Ignore entire fonts folder
+assets/fonts/
+assets/images/
