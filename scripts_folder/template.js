@@ -28,3 +28,22 @@ function getFooterTemplate(){
     </footer>
     `;
 }
+
+function getMiniCardTemplate(pokemon) {
+  return `
+    <div class="card card-3d mt-5 mb-5" onclick="renderBigCardDirect(${pokemon.id})">
+      <div class="card-body-img flex-standard">
+        <img class="card-img-top" src="${pokemon.sprites.other['official-artwork'].front_default}">
+      </div>
+      <div class="card-body">
+        <h5 class="card-title flex-standard">
+          <p class="name-of-pokemon">${pokemon.name.toUpperCase()}</p>
+          <div id="index-of-pokemon">(# ${pokemon.id})</div>
+        </h5>
+      </div>
+      <div class="card-body flex-standard">
+        <p class="card-link">TYP: <span>${pokemon.types[0].type.name}</span></p>
+      </div>
+    </div>
+  `;
+}
