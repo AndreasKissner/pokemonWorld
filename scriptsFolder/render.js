@@ -1,12 +1,11 @@
-function renderSection(id, templateFunction) {
-    const element = document.getElementById(id);
-    element.innerHTML = templateFunction();
+function renderSection(id) {
+  const element = document.getElementById(id);
+  element.innerHTML = getTemplate(id);
 }
 
 
 function renderMiniCard(start = 0) {
   const miniCardContent = document.getElementById("mini-card-content");
-
   for (let i = start; i < allPokemons.length; i++) {
     const miniCard = getMiniCardTemplate(allPokemons[i]);
     miniCardContent.insertAdjacentHTML("beforeend", miniCard);//Method that allows you to insert HTML code as a string directly into the DOM – without creating a new DOM element with createElement
@@ -31,7 +30,7 @@ async function renderBigCard(pokemon) {
   colorBigCard(pokemon);
 }
 
- // Search render function for input search
+// Search render function for input search
 function renderFilteredCards(filteredPokemons) {
   const container = document.getElementById("mini-card-content");
   container.innerHTML = "";
@@ -42,9 +41,8 @@ function renderFilteredCards(filteredPokemons) {
 }
 
 window.addEventListener("load", async () => {
-renderSection("header", getHeaderTemplate);
-renderSection("footer", getFooterTemplate);
-
+  renderSection("header");
+  renderSection("footer");
   await loadAllPokemonList();           // <-- NEW
   await loadInitPokemonsWithSpinner();  // loading first 20 PKM
   renderMiniCard();
