@@ -1,12 +1,8 @@
-function renderHeader(pokemon){
-    let headerContent = document.getElementById("header");
-    headerContent.innerHTML = getHeaderTemplate();
+function renderSection(id, templateFunction) {
+    const element = document.getElementById(id);
+    element.innerHTML = templateFunction();
 }
 
-function renderFooter(){
-    let footerContent = document.getElementById("footer");
-    footerContent.innerHTML = getFooterTemplate();
-}
 
 function renderMiniCard(start = 0) {
   const miniCardContent = document.getElementById("mini-card-content");
@@ -46,8 +42,9 @@ function renderFilteredCards(filteredPokemons) {
 }
 
 window.addEventListener("load", async () => {
-  renderHeader();
-  renderFooter();
+renderSection("header", getHeaderTemplate);
+renderSection("footer", getFooterTemplate);
+
   await loadAllPokemonList();           // <-- NEW
   await loadInitPokemonsWithSpinner();  // loading first 20 PKM
   renderMiniCard();

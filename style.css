@@ -42,13 +42,13 @@ html {
   border-top: 3px solid black;
   background: linear-gradient(
     to right,
-    #FFCB05 0%,      /* Pokémon Yellow */ 
-    #3D7DCA 33%,     /* Pokémon Blue */ 
-    #003A70 66%,     /* Pokémon Navy Blue */
-    #FFCB05 100%     /* und zurück zu Gelb */
+    #FFCB05 0%,    
+    #3D7DCA 33%,      
+    #003A70 66%,     
+    #ab541d 100%     
   );
-  background-size: 200% 100%; /* für längere Übergänge */
-  animation: gradientShift 10s ease infinite; /* animierte Bewegung */
+  background-size: 200% 100%; 
+  animation: gradientShift 10s ease infinite;
 }
 
 @keyframes gradientShift {
