@@ -5,7 +5,7 @@ async function loadPokemonList(maxLimit, startIndex) {
     const data = await response.json();
     return data.results;// NAME AND URL FOR EVERY  PKM
   } catch (error) {
-    console.error('Fehler beim Laden der Pokémon-Liste:', error);
+    console.error('Error loading PKM list:', error);
     return [];
   }
 }
@@ -16,7 +16,7 @@ async function loadPokemonDetails(url) {
     const data = await response.json();
     return data;// name, id, sprites, type ec
   } catch (error) {
-    console.error('Fehler beim Laden der Pokémon-Daten:', error);
+    console.error('Error loading PKM details:', error);
     return null;
   }
 }
@@ -36,45 +36,55 @@ async function loadWeakness(pokemon) {
     }
     return result.join(", "); // z.B. "fire, flying"
   } catch (error) {
-    console.error("Fehler beim Laden der Schwächen:", error);
+    console.error("Error loading weaknesses:", error);
     return "unknown";
   }
 }
 
 
 // Evo
+async function fetchEvolutionChainUrl(pokemon) {
+  const speciesResponse = await fetch(pokemon.species.url);
+  const speciesData = await speciesResponse.json();
+  return speciesData.evolution_chain.url;
+}
+
+async function extractEvolutionNames(evoUrl) {
+  const evoResponse = await fetch(evoUrl);
+  const evoData = await evoResponse.json();
+  const chain = evoData.chain;
+
+  let result = [chain.species.name];
+  if (chain.evolves_to.length > 0) {
+    result.push(chain.evolves_to[0].species.name);
+    if (chain.evolves_to[0].evolves_to.length > 0) {
+      result.push(chain.evolves_to[0].evolves_to[0].species.name);
+    }
+  }
+  return result;
+}
+
+
+async function fetchEvolutionImages(names) {
+  let evoWithImg = [];
+  for (const name of names) {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    const data = await response.json();
+    evoWithImg.push({
+      name: data.name,
+      img: data.sprites.other['official-artwork'].front_default
+    });
+  }
+  return evoWithImg;
+}
+
 async function loadEvolution(pokemon) {
   try {
-    const speciesResponse = await fetch(pokemon.species.url);
-    const speciesData = await speciesResponse.json();
-    const evoUrl = speciesData.evolution_chain.url;
-    const evoResponse = await fetch(evoUrl);
-    const evoData = await evoResponse.json();
-    let chain = evoData.chain;
-    let result = [];
-    // 1. Stufe
-    result.push(chain.species.name);
-    // 2. Stufe
-    if (chain.evolves_to.length > 0) {
-      result.push(chain.evolves_to[0].species.name);
-      // 3. Stufe (optional)
-      if (chain.evolves_to[0].evolves_to.length > 0) {
-        result.push(chain.evolves_to[0].evolves_to[0].species.name);
-      }
-    }
-    let evoWithImg = [];
-    for (let i = 0; i < result.length; i++) {
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${result[i]}`);
-      const data = await response.json();
-      evoWithImg.push({
-        name: data.name,
-        img: data.sprites.other['official-artwork'].front_default
-      });
-    }
-    
-    return evoWithImg;
+    const evoUrl = await fetchEvolutionChainUrl(pokemon);
+    const names = await extractEvolutionNames(evoUrl);
+    return await fetchEvolutionImages(names);
   } catch (error) {
-    console.error("Fehler bei Evolution:", error);
+    console.error("Error with Evolution:", error);
     return [];
   }
 }

@@ -18,7 +18,6 @@ const typeColors = {
   steel: "#B7B7CE",
   fairy: "#D685AD"
 };
-
 let currentBigCardIndex = 0;// Change next PKM
 let startIndex = 20;
 let isLoading = false;
@@ -88,7 +87,6 @@ function hideSpinner() {
 
 
 // Scroll Logik
-
 window.addEventListener("scroll", () => {
   const scrollBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight;
   if (scrollBottom && !isLoading) {
@@ -107,6 +105,8 @@ async function loadMorePokemons() {
     const pokemon = await loadPokemonDetails(url);
     allPokemons.push(pokemon);
   }
+
+
   renderMiniCard(allPokemons.length - newList.length);  // 4. Karten rendern
   hideSpinner();  // 5. Spinner ausblende
   setTimeout(() => {
@@ -115,7 +115,7 @@ async function loadMorePokemons() {
 }
 
 
-//search functio
+//search function
 function initSearch() {
   const input = document.getElementById("input-search");
   if (!input) return;

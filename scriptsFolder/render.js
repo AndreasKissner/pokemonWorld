@@ -13,8 +13,6 @@ function renderMiniCard(start = 0) {
   colorMiniCards();
 }
 
-
-
 async function renderBigCard(pokemon) {
   const overlay = document.getElementById("big-card-overlay");
   const weaknessText = await loadWeakness(pokemon);

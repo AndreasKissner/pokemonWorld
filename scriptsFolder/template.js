@@ -1,6 +1,6 @@
 function getTemplate(section) {
-    if (section === "header") {
-        return `
+  if (section === "header") {
+    return `
         <header class="flex-standard mt-5 mb-5">
             <h1>Pokémon World</h1>
             <label for="input_search" class="form-label"></label>
@@ -9,10 +9,10 @@ function getTemplate(section) {
             <button onclick="resetALLPokemon()" type="button" id="reset-btn" class="btn btn-outline-danger">RESET ALL</button>
         </header>
         `;
-    }
+  }
 
-    if (section === "footer") {
-        return `
+  if (section === "footer") {
+    return `
         <footer class="bg-dark text-light py-4 ">
             <div class="footer-container text-center">
                 <p class="mb-1">Thanks for exploring the world of Pokémon!</p>
@@ -26,10 +26,9 @@ function getTemplate(section) {
             </div>
         </footer>
         `;
-    }
-    return ""; // Fallback for security 
+  }
+  return ""; // Fallback for security 
 }
-
 
 function getMiniCardTemplate(pokemon) {
   return `
@@ -49,6 +48,7 @@ function getMiniCardTemplate(pokemon) {
     </div>
   `;
 }
+
 
 function getBigCardTemplate(pokemon, weaknessText, evo1, evo2, evo3) {
   return `
@@ -109,7 +109,6 @@ function getBigCardTemplate(pokemon, weaknessText, evo1, evo2, evo3) {
   <button class="btn btn-outline-primary" onclick="showPreviousPokemon(${pokemon.id})">LAST</button>
   <button class="btn btn-outline-light" onclick="showNextPokemon(${pokemon.id})">NEXT</button>
 </div>
-
 
   </div>
   `;
