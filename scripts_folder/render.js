@@ -35,3 +35,12 @@ async function renderBigCard(pokemon) {
   colorBigCard(pokemon);
 }
 
+ // Search render function for input search
+function renderFilteredCards(filteredPokemons) {
+  const container = document.getElementById("mini-card-content");
+  container.innerHTML = "";
+  for (let i = 0; i < filteredPokemons.length; i++) {
+    const miniCard = getMiniCardTemplate(filteredPokemons[i], i);
+    container.insertAdjacentHTML("beforeend", miniCard);
+  }
+}
