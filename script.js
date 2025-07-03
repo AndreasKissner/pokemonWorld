@@ -18,6 +18,7 @@ const typeColors = {
     steel: "#B7B7CE",
     fairy: "#D685AD"
 };
+let isSearching = false;
 let currentBigCardIndex = 0;// Change next PKM
 let startIndex = 20;
 let isLoading = false;
@@ -33,8 +34,6 @@ async function loadInitPokemons() {
         allPokemons.push(pokemon);
     }
 }
-
-
 document.getElementById("big-card-overlay").addEventListener("click", function (event) { // LEArning
     if (event.target.id === "big-card-overlay") {
         closeBigCard();
@@ -85,6 +84,7 @@ function initSearch() {
     input.addEventListener("input", async () => {
         const queryInput = input.value.toLowerCase();
         if (queryInput.length >= 3) {
+                isSearching = true;
             const matches = allPokemonList.filter(p => p.name.includes(queryInput)).slice(0, 10); // z. B. nur 10 anzeigen
             const filteredPokemons = [];
             for (let i = 0; i < matches.length; i++) {
@@ -93,6 +93,7 @@ function initSearch() {
             }
             renderFilteredCards(filteredPokemons);
         } else {
+               isSearching = false;
             renderMiniCard(); // zurück zur Liste
         }
     });
@@ -175,9 +176,14 @@ function colorBigCard(pokemon) {
 }
 
 function closeBigCard() {
-    document.getElementById("big-card-overlay").classList.add("d-none");
-    document.body.style.overflow = "auto";
+  document.getElementById("big-card-overlay").classList.add("d-none");
+  document.body.style.overflow = "auto";
+
+  setTimeout(() => {
+    window.dispatchEvent(new Event('scroll'));
+  }, 100);
 }
+
 
 window.addEventListener("scroll", () => {
     const scrollBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight;
@@ -189,9 +195,8 @@ window.addEventListener("scroll", () => {
     } else {
         btn.classList.add("d-none");
     }
-
     // Endlos-Scroll auslösen
-    if (scrollBottom && !isLoading) {
-        loadMorePokemons();
-    }
+    if (scrollBottom && !isLoading && !isSearching) {
+    loadMorePokemons();
+}
 });
