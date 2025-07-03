@@ -14,14 +14,15 @@ function renderMiniCard(start = 0) {
 // NEW 03.07.2025
 async function renderBigCard(pokemon) {
   const overlay = document.getElementById("big-card-overlay");
-  const weaknessText = await loadWeakness(pokemon);
-  const evoList = await loadEvolution(pokemon) || [];
+  const weaknessText = pokemon.weaknesses || await loadWeakness(pokemon);
+  const evoList = pokemon.evolutions || await loadEvolution(pokemon);
 
   overlay.innerHTML = getBigCardTemplate(pokemon, weaknessText, evoList);
   overlay.classList.remove("d-none");
   document.body.style.overflow = "hidden";
   colorBigCard(pokemon);
 }
+
 
 
 // Search render function for input search
@@ -40,6 +41,6 @@ window.addEventListener("load", async () => {
   renderSection("footer");
   await loadAllPokemonList();           // <-- NEW
   await loadInitPokemonsWithSpinner();  // loading first 20 PKM
- /*  renderMiniCard(); */
+  /*  renderMiniCard(); */
   initSearch();
 });

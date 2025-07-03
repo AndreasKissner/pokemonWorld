@@ -31,14 +31,15 @@ async function loadInitPokemons() {
     for (let i = 0; i < list.length; i++) {
         const url = list[i].url;
         const pokemon = await loadPokemonDetails(url);
+
+        // Hier speichern wir Schwächen und Evolutionen direkt ins Objekt
+        pokemon.weaknesses = await loadWeakness(pokemon);
+        pokemon.evolutions = await loadEvolution(pokemon);
+
         allPokemons.push(pokemon);
     }
 }
-document.getElementById("big-card-overlay").addEventListener("click", function (event) { // LEArning
-    if (event.target.id === "big-card-overlay") {
-        closeBigCard();
-    }
-});
+
 
 
 // Image CHanger
