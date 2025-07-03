@@ -3,7 +3,6 @@ function renderSection(id) {
   element.innerHTML = getTemplate(id);
 }
 
-
 function renderMiniCard(start = 0) {
   const miniCardContent = document.getElementById("mini-card-content");
   for (let i = start; i < allPokemons.length; i++) {
@@ -38,11 +37,12 @@ function renderFilteredCards(filteredPokemons) {
   }
 }
 
+
 window.addEventListener("load", async () => {
   renderSection("header");
   renderSection("footer");
   await loadAllPokemonList();           // <-- NEW
   await loadInitPokemonsWithSpinner();  // loading first 20 PKM
-  renderMiniCard();
+ /*  renderMiniCard(); */
   initSearch();
 });
