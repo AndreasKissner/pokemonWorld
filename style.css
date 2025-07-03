@@ -9,7 +9,13 @@
 
 body {
     box-sizing: border-box;
-    background: linear-gradient(135deg, #a8e063, #56ab2f);
+  background: linear-gradient(
+    to right,
+    #FFCB05 0%,    
+    #3D7DCA 33%,      
+    #003A70 66%,     
+    #ab541d 100%     
+  );
     min-height: 100vh;
     font-family: var(--main-font);
     letter-spacing: 3px;
@@ -40,13 +46,13 @@ html {
   max-width: 1920px;
   width: 100%;
   border-top: 3px solid black;
-  background: linear-gradient(
+/*   background: linear-gradient(
     to right,
     #FFCB05 0%,    
     #3D7DCA 33%,      
     #003A70 66%,     
     #ab541d 100%     
-  );
+  ); */
   background-size: 200% 100%; 
   animation: gradientShift 10s ease infinite;
 }
