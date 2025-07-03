@@ -90,23 +90,30 @@ async function loadPokemonDetails(url) {
     return null;
   }
 }
-
 async function loadWeakness(pokemon) {
   try {
-    const typeUrl = pokemon.types[0].type.url; // URL zum Haupt-Typ holen Important 
-    const response = await fetch(typeUrl); // API-for typ  Wichtig 
-    const data = await response.json(); // JSON-Daten Loading
-    const weaknesses = data.damage_relations.double_damage_from; // weakness get
-    let result = [];
-    for (let i = 0; i < weaknesses.length; i++) {
-      result.push(weaknesses[i].name);
-    }
-    return result.join(", "); // "fire, flying"
+    const data = await fetchTypeData(pokemon);
+    return formatWeaknesses(data.damage_relations.double_damage_from);
   } catch (error) {
     console.error("Error loading weaknesses:", error);
     return "unknown";
   }
 }
+
+async function fetchTypeData(pokemon) {
+  const url = pokemon.types[0].type.url;
+  const res = await fetch(url);
+  return await res.json();
+}
+
+function formatWeaknesses(weaknesses) {
+  let result = [];
+  for (let i = 0; i < weaknesses.length; i++) {
+    result.push(weaknesses[i].name);
+  }
+  return result.join(", ");
+}
+
 
 async function fetchEvolutionChainUrl(pokemon) {
   const speciesResponse = await fetch(pokemon.species.url);

@@ -15,14 +15,13 @@ function renderMiniCard(start = 0) {
 async function renderBigCard(pokemon) {
   const overlay = document.getElementById("big-card-overlay");
   const weaknessText = pokemon.weaknesses || await loadWeakness(pokemon);
-  const evoList = pokemon.evolutions || await loadEvolution(pokemon);
+  const evoList = pokemon.evolutions || await loadEvolution(pokemon);// NEU CHECK if here or he must new laoding
 
   overlay.innerHTML = getBigCardTemplate(pokemon, weaknessText, evoList);
   overlay.classList.remove("d-none");
   document.body.style.overflow = "hidden";
   colorBigCard(pokemon);
 }
-
 
 
 // Search render function for input search

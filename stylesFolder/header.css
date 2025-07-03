@@ -1,13 +1,11 @@
-header{
-gap: 40px;
-flex-wrap: wrap;
-
-width: 100%;
-max-width: 1920px;
-
+header {
+    gap: 40px;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 1920px;
 }
 
-.form-control{
+.form-control {
     width: 100%;
     max-width: 220px;
 }

@@ -18,6 +18,7 @@ const typeColors = {
     steel: "#B7B7CE",
     fairy: "#D685AD"
 };
+
 let isSearching = false;
 let currentBigCardIndex = 0;// Change next PKM
 let startIndex = 20;
@@ -25,23 +26,17 @@ let isLoading = false;
 let allPokemons = [];
 let allPokemonList = []; // Nur name + url
 
-
 async function loadInitPokemons() {
     const list = await loadPokemonList(20, 0); // GET 20 PKM NAME AND URL
     for (let i = 0; i < list.length; i++) {
         const url = list[i].url;
         const pokemon = await loadPokemonDetails(url);
-
         // Hier speichern wir Schwächen und Evolutionen direkt ins Objekt
         pokemon.weaknesses = await loadWeakness(pokemon);
         pokemon.evolutions = await loadEvolution(pokemon);
-
         allPokemons.push(pokemon);
     }
 }
-
-
-
 // Image CHanger
 function renderBigCardByIndex(index) {
     currentBigCardIndex = index; // For nows which image is current
@@ -55,8 +50,6 @@ function changeBigCard(direction) {
         renderBigCardByIndex(newImgIndex);
     }
 }
-
-
 // Spinner
 async function loadInitPokemonsWithSpinner() {
     showSpinner();  // Spinner sichtbar
@@ -64,7 +57,6 @@ async function loadInitPokemonsWithSpinner() {
     renderMiniCard(); // Karten anzeigen
     hideSpinner(); // Spinner ausblenden
 }
-
 
 function showSpinner() {
     document.getElementById("big-overlay").classList.remove("d-none");
@@ -75,29 +67,33 @@ function hideSpinner() {
     setTimeout(() => {
         document.getElementById("big-overlay").classList.add("d-none");
         document.getElementById("mini-card-content").classList.remove("loading");
-    }, 2000); // Spinner bleibt 2 Sekunden sichtbar
+    }, 1000); // Spinner bleibt 2 Sekunden sichtbar
 }
 
-//search function
 function initSearch() {
-    const input = document.getElementById("input-search");
-    if (!input) return;
-    input.addEventListener("input", async () => {
-        const queryInput = input.value.toLowerCase();
-        if (queryInput.length >= 3) {
-                isSearching = true;
-            const matches = allPokemonList.filter(p => p.name.includes(queryInput)).slice(0, 10); // z. B. nur 10 anzeigen
-            const filteredPokemons = [];
-            for (let i = 0; i < matches.length; i++) {
-                const pokemon = await loadPokemonDetails(matches[i].url);
-                filteredPokemons.push(pokemon);
-            }
-            renderFilteredCards(filteredPokemons);
-        } else {
-               isSearching = false;
-            renderMiniCard(); // zurück zur Liste
-        }
-    });
+  const input = document.getElementById("input-search");
+  if (!input) return;
+
+  input.addEventListener("input", () => {
+    const query = input.value.toLowerCase();
+    handleSearch(query);
+  });
+}
+
+async function handleSearch(query) {
+  if (query.length >= 3) {
+    isSearching = true;
+    const matches = allPokemonList.filter(p => p.name.includes(query)).slice(0, 10);
+    const results = [];
+    for (let i = 0; i < matches.length; i++) {
+      const pokemon = await loadPokemonDetails(matches[i].url);
+      results.push(pokemon);
+    }
+    renderFilteredCards(results);
+  } else {
+    isSearching = false;
+    renderMiniCard();
+  }
 }
 
 async function loadAllPokemonList() {
@@ -105,8 +101,6 @@ async function loadAllPokemonList() {
     const data = await response.json();
     allPokemonList = data.results; // [{name, url}, ...]
 }
-
-
 
 async function renderBigCardDirect(pokemonId) {
     let found = allPokemons.find(p => p.id === pokemonId);
@@ -139,17 +133,22 @@ function resetALLPokemon() {
 }
 
 async function loadMorePokemons() {
+    isLoading = true; // <-- Wichtig: direkt am Anfang setzen
     const lastScrollY = window.scrollY;
     showSpinner();
-    const newList = await loadPokemonList(20, allPokemons.length); // Weiter ab aktuellem Index
+    
+    const newList = await loadPokemonList(20, allPokemons.length);
     for (let i = 0; i < newList.length; i++) {
         const url = newList[i].url;
         const pokemon = await loadPokemonDetails(url);
         allPokemons.push(pokemon);
     }
+
     hideSpinner();
-    renderMiniCard(allPokemons.length - newList.length); // Nur die neuen rendern
-    window.scrollTo({ top: lastScrollY, behavior: "auto" }); // Scrollposition behalten
+    renderMiniCard(allPokemons.length - newList.length);
+    window.scrollTo({ top: lastScrollY, behavior: "auto" });
+
+    isLoading = false; // <-- Wichtig: am Ende wieder freigeben
 }
 
 function scrollToTop() {
@@ -185,19 +184,31 @@ function closeBigCard() {
   }, 100);
 }
 
-
 window.addEventListener("scroll", () => {
-    const scrollBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight;
+   const scrollBottom = (window.innerHeight + window.scrollY) / document.body.scrollHeight > 0.95;
     const btn = document.getElementById("scroll-top-btn");
-
-    // Sichtbarkeit des Scroll-Top-Buttons
+    // Visisble Scrol to Top Buttton
     if (window.scrollY > 300) {
         btn.classList.remove("d-none");
     } else {
         btn.classList.add("d-none");
     }
-    // Endlos-Scroll auslösen
+  // Scroll forever
     if (scrollBottom && !isLoading && !isSearching) {
     loadMorePokemons();
 }
 });
+
+function createEvolutionHTML(evoList) {
+  let evoHTML = "";
+  for (let i = 0; i < evoList.length; i++) {
+    const evo = evoList[i];
+    evoHTML += `
+      <div class="evo-entry">
+        <img src="${evo.img}" class="evo-img" alt="${evo.name}">
+        <p class="evo-name">${evo.name.toUpperCase()}</p>
+      </div>
+    `;
+  }
+  return evoHTML;
+}
