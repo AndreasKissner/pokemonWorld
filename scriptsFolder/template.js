@@ -50,7 +50,7 @@ function getMiniCardTemplate(pokemon) {
 }
 
 
-function getBigCardTemplate(pokemon, weaknessText, evo1, evo2, evo3) {
+function getBigCardTemplate(pokemon, weaknessText, evoList) {
   return `
     <div class="flex-standard big-card">
    <div class="close-btn" onclick="closeBigCard()">×</div>
@@ -82,29 +82,23 @@ function getBigCardTemplate(pokemon, weaknessText, evo1, evo2, evo3) {
         </li>
       </ul>
 
-     <div class="big-right-skills">
-      <p class="weak">Weekness:</p>
-        <p class="weak">${weaknessText}</p>
-        <div class="evo">
-             
-          <div class="evo-entry">
-          <div class="evo-title">
-            <p class="evo-title-text">&nbsp;&nbsp;EVOLUTION:</p>
-            </div>
-            <img src="${evo1.img}" class="evo-img" alt="${evo1.name}">
-            <p class="evo-name">${evo1.name.toUpperCase()}</p>
-         
-          <div class="evo-entry">
-            <img src="${evo2.img}" class="evo-img" alt="${evo2.name}">
-            <p class="evo-name">${evo2.name.toUpperCase()}</p>
-          </div>
-          <div class="evo-entry">
-            <img src="${evo3.img}" class="evo-img" alt="${evo3.name}">
-            <p class="evo-name">${evo3.name.toUpperCase()}</p>
-          </div>
-        </div>
-      </div>
+   <div class="big-right-skills">
+    <p class="weak">Weekness:</p>
+    <p class="weak">${weaknessText}</p>
+    <div class="evo">
 
+        <div class="evo-entry">
+            <div class="evo-title">
+                <p class="evo-title-text">&nbsp;&nbsp;EVOLUTION:</p>
+            </div>
+            ${evoList.map(evo => `
+            <div class="evo-entry">
+                <img src="${evo.img}" class="evo-img" alt="${evo.name}">
+                <p class="evo-name">${evo.name.toUpperCase()}</p>
+            </div>
+            `).join("")}
+        </div>
+    </div>
  <div class="btn-change-overlay-img">
   <button class="btn btn-outline-primary" onclick="showPreviousPokemon(${pokemon.id})">LAST</button>
   <button class="btn btn-outline-light" onclick="showNextPokemon(${pokemon.id})">NEXT</button>

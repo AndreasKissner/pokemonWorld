@@ -11,21 +11,18 @@ function renderMiniCard(start = 0) {
   }
   colorMiniCards();
 }
-
+// NEW 03.07.2025
 async function renderBigCard(pokemon) {
   const overlay = document.getElementById("big-card-overlay");
   const weaknessText = await loadWeakness(pokemon);
-  const evoList = await loadEvolution(pokemon);
+  const evoList = await loadEvolution(pokemon) || [];
 
-  const evo1 = evoList[0] || { name: "?", img: "./assets/image/placeholder.png" }; // EVO IMAGE
-  const evo2 = evoList[1] || { name: "?", img: "./assets/image/placeholder.png" };
-  const evo3 = evoList[2] || { name: "?", img: "./assets/image/placeholder.png" };
-
-  overlay.innerHTML = getBigCardTemplate(pokemon, weaknessText, evo1, evo2, evo3);
+  overlay.innerHTML = getBigCardTemplate(pokemon, weaknessText, evoList);
   overlay.classList.remove("d-none");
   document.body.style.overflow = "hidden";
   colorBigCard(pokemon);
 }
+
 
 // Search render function for input search
 function renderFilteredCards(filteredPokemons) {
