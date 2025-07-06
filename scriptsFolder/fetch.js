@@ -1,3 +1,4 @@
+
 async function loadPokemonList(maxLimit, startIndex) {
   try {
     const url = `https://pokeapi.co/api/v2/pokemon?limit=${maxLimit}&offset=${startIndex}`;
@@ -14,12 +15,13 @@ async function loadPokemonDetails(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    return data;// name, id, sprites, type ec
+    return data;
   } catch (error) {
     console.error('Error loading PKM details:', error);
     return null;
   }
 }
+
 async function loadWeakness(pokemon) {
   try {
     const data = await fetchTypeData(pokemon);

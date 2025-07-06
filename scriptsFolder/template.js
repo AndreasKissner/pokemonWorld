@@ -27,7 +27,7 @@ function getTemplate(section) {
         </footer>
         `;
   }
-  return ""; 
+  return "";
 }
 
 function getMiniCardTemplate(pokemon) {
@@ -51,7 +51,6 @@ function getMiniCardTemplate(pokemon) {
 
 function getBigCardTemplate(pokemon, weaknessText, evoList) {
   const evoHTML = createEvolutionHTML(evoList);
-
   return `
     <div class="flex-standard big-card">
       <div class="close-btn" onclick="closeBigCard()">×</div>

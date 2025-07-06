@@ -19,12 +19,21 @@ const typeColors = {
     fairy: "#D685AD"
 };
 
+
 let isSearching = false;
-let currentBigCardIndex = 0;// Change next PKM
+let currentBigCardIndex = 0;
 let startIndex = 20;
 let isLoading = false;
 let allPokemons = [];
-let allPokemonList = []; // Nur name + url
+let allPokemonList = [];
+
+function debounce(fn, wait = 300) {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), wait);
+    };
+}
 
 async function fetchAndAddPokemon(url) {
     const pokemon = await loadPokemonDetails(url);
@@ -35,15 +44,14 @@ async function fetchAndAddPokemon(url) {
 }
 
 async function loadInitPokemons() {
-    const list = await loadPokemonList(20, 0); // GET 20 PKM NAME AND URL
-for (let i = 0; i < list.length; i++) {
-    await fetchAndAddPokemon(list[i].url);
+    const list = await loadPokemonList(20, 0);
+    for (let i = 0; i < list.length; i++) {
+        await fetchAndAddPokemon(list[i].url);
+    }
 }
 
-}
-// Image CHanger
 function renderBigCardByIndex(index) {
-    currentBigCardIndex = index; // For nows which image is current
+    currentBigCardIndex = index;
     const pokemon = allPokemons[index];
     renderBigCard(pokemon);
 }
@@ -54,12 +62,12 @@ function changeBigCard(direction) {
         renderBigCardByIndex(newImgIndex);
     }
 }
-// Spinner
+
 async function loadInitPokemonsWithSpinner() {
-    toggleSpinner(true);;  // Spinner sichtbar
-    await loadInitPokemons(); // Pokemon-Daten laden
-    renderMiniCard(); // Karten anzeigen
-    toggleSpinner(false);; // Spinner ausblenden
+    toggleSpinner(true);
+    await loadInitPokemons();
+    renderMiniCard();
+    toggleSpinner(false);
 }
 
 function toggleSpinner(show) {
@@ -78,12 +86,9 @@ function toggleSpinner(show) {
 
 function initSearch() {
     const input = document.getElementById("input-search");
-    if (!input) return;
-
-    input.addEventListener("input", () => {
-        const query = input.value.toLowerCase();
-        handleSearch(query);
-    });
+    input.addEventListener("input", debounce(() => {
+        handleSearch(input.value.toLowerCase());
+    }));
 }
 
 async function handleSearch(query) {
@@ -96,7 +101,7 @@ async function handleSearch(query) {
 
 async function searchPokemons(query) {
     isSearching = true;
-    const matches = allPokemonList.filter(p => p.name.includes(query)).slice(0, 10);
+    const matches = allPokemonList.filter(pkm => pkm.name.includes(query)).slice(0, 10);
     const results = [];
     for (let i = 0; i < matches.length; i++) {
         const pokemon = await loadPokemonDetails(matches[i].url);
@@ -126,7 +131,7 @@ async function renderBigCardDirect(pokemonId) {
         try {
             const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
             found = await loadPokemonDetails(url);
-            allPokemons.push(found); // nachträglich hinzufügen
+            allPokemons.push(found);
         } catch (err) {
             console.warn("Fehler beim Nachladen:", err);
             return;
@@ -147,37 +152,33 @@ async function showPreviousPokemon(currentId) {
 }
 
 function resetALLPokemon() {
-    location.reload(); // Lädt die komplette Seite neu
+    location.reload();
 }
 
 async function loadMorePokemons() {
-    isLoading = true; // <-- Wichtig: direkt am Anfang setzen
+    isLoading = true;
     const lastScrollY = window.scrollY;
     toggleSpinner(true);;
     const newList = await loadPokemonList(20, allPokemons.length);
-   for (let i = 0; i < newList.length; i++) {
-    await fetchAndAddPokemon(newList[i].url);
-}
+    for (let i = 0; i < newList.length; i++) {
+        await fetchAndAddPokemon(newList[i].url);
+    }
     toggleSpinner(false);;
     renderMiniCard(allPokemons.length - newList.length);
     window.scrollTo({ top: lastScrollY, behavior: "auto" });
-    isLoading = false; // <-- Wichtig: am Ende wieder freigeben
-}
-
-
-function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    isLoading = false;
 }
 
 function colorMiniCards() {
     const cards = document.querySelectorAll(".card");
-    cards.forEach((card, index) => {
-        const pokemon = allPokemons[index];
-        if (!pokemon) return;
+    for (let i = 0; i < cards.length; i++) {
+        const card = cards[i];
+        const pokemon = allPokemons[i];
+        if (!pokemon) continue;
         const type = pokemon.types[0].type.name;
         const bgColor = typeColors[type] || "#ccc";
         card.style.backgroundColor = bgColor;
-    });
+    }
 }
 
 function colorBigCard(pokemon) {
@@ -215,14 +216,16 @@ function createEvolutionHTML(evoList) {
 window.addEventListener("scroll", () => {
     const scrollBottom = (window.innerHeight + window.scrollY) / document.body.scrollHeight > 0.95;
     const btn = document.getElementById("scroll-top-btn");
-    // Visisble Scrol to Top Buttton
     if (window.scrollY > 300) {
         btn.classList.remove("d-none");
     } else {
         btn.classList.add("d-none");
     }
-    // Scroll forever
     if (scrollBottom && !isLoading && !isSearching) {
         loadMorePokemons();
     }
 });
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
