@@ -71,3 +71,9 @@
   opacity: 0.4;
   pointer-events: none;
 }
+
+@media(max-width: 620px) {
+  #mini-card-content {
+    gap: 0px;
+  }
+}

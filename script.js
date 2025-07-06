@@ -26,16 +26,20 @@ let isLoading = false;
 let allPokemons = [];
 let allPokemonList = []; // Nur name + url
 
+async function fetchAndAddPokemon(url) {
+    const pokemon = await loadPokemonDetails(url);
+    if (!pokemon) return;
+    pokemon.weaknesses = await loadWeakness(pokemon);
+    pokemon.evolutions = await loadEvolution(pokemon);
+    allPokemons.push(pokemon);
+}
+
 async function loadInitPokemons() {
     const list = await loadPokemonList(20, 0); // GET 20 PKM NAME AND URL
-    for (let i = 0; i < list.length; i++) {
-        const url = list[i].url;
-        const pokemon = await loadPokemonDetails(url);
-        // Hier speichern wir Schwächen und Evolutionen direkt ins Objekt
-        pokemon.weaknesses = await loadWeakness(pokemon);
-        pokemon.evolutions = await loadEvolution(pokemon);
-        allPokemons.push(pokemon);
-    }
+for (let i = 0; i < list.length; i++) {
+    await fetchAndAddPokemon(list[i].url);
+}
+
 }
 // Image CHanger
 function renderBigCardByIndex(index) {
@@ -52,49 +56,63 @@ function changeBigCard(direction) {
 }
 // Spinner
 async function loadInitPokemonsWithSpinner() {
-    showSpinner();  // Spinner sichtbar
+    toggleSpinner(true);;  // Spinner sichtbar
     await loadInitPokemons(); // Pokemon-Daten laden
     renderMiniCard(); // Karten anzeigen
-    hideSpinner(); // Spinner ausblenden
+    toggleSpinner(false);; // Spinner ausblenden
 }
 
-function showSpinner() {
-    document.getElementById("big-overlay").classList.remove("d-none");
-    document.getElementById("mini-card-content").classList.add("loading");
-}
-
-function hideSpinner() {
-    setTimeout(() => {
-        document.getElementById("big-overlay").classList.add("d-none");
-        document.getElementById("mini-card-content").classList.remove("loading");
-    }, 1000); // Spinner bleibt 2 Sekunden sichtbar
+function toggleSpinner(show) {
+    const overlay = document.getElementById("big-overlay");
+    const content = document.getElementById("mini-card-content");
+    if (show) {
+        overlay.classList.remove("d-none");
+        content.classList.add("loading");
+    } else {
+        setTimeout(() => {
+            overlay.classList.add("d-none");
+            content.classList.remove("loading");
+        }, 1000);
+    }
 }
 
 function initSearch() {
-  const input = document.getElementById("input-search");
-  if (!input) return;
+    const input = document.getElementById("input-search");
+    if (!input) return;
 
-  input.addEventListener("input", () => {
-    const query = input.value.toLowerCase();
-    handleSearch(query);
-  });
+    input.addEventListener("input", () => {
+        const query = input.value.toLowerCase();
+        handleSearch(query);
+    });
 }
 
 async function handleSearch(query) {
-  if (query.length >= 3) {
+    if (query.length >= 3) {
+        await searchPokemons(query);
+    } else {
+        await resetSearch();
+    }
+}
+
+async function searchPokemons(query) {
     isSearching = true;
     const matches = allPokemonList.filter(p => p.name.includes(query)).slice(0, 10);
     const results = [];
     for (let i = 0; i < matches.length; i++) {
-      const pokemon = await loadPokemonDetails(matches[i].url);
-      results.push(pokemon);
+        const pokemon = await loadPokemonDetails(matches[i].url);
+        results.push(pokemon);
     }
     renderFilteredCards(results);
-  } else {
-    isSearching = false;
-    renderMiniCard();
-  }
 }
+
+async function resetSearch() {
+    isSearching = false;
+    allPokemons = [];
+    document.getElementById("mini-card-content").innerHTML = "";
+    await loadInitPokemons();
+    renderMiniCard();
+}
+
 
 async function loadAllPokemonList() {
     const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0");
@@ -135,21 +153,17 @@ function resetALLPokemon() {
 async function loadMorePokemons() {
     isLoading = true; // <-- Wichtig: direkt am Anfang setzen
     const lastScrollY = window.scrollY;
-    showSpinner();
-    
+    toggleSpinner(true);;
     const newList = await loadPokemonList(20, allPokemons.length);
-    for (let i = 0; i < newList.length; i++) {
-        const url = newList[i].url;
-        const pokemon = await loadPokemonDetails(url);
-        allPokemons.push(pokemon);
-    }
-
-    hideSpinner();
+   for (let i = 0; i < newList.length; i++) {
+    await fetchAndAddPokemon(newList[i].url);
+}
+    toggleSpinner(false);;
     renderMiniCard(allPokemons.length - newList.length);
     window.scrollTo({ top: lastScrollY, behavior: "auto" });
-
     isLoading = false; // <-- Wichtig: am Ende wieder freigeben
 }
+
 
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -176,16 +190,30 @@ function colorBigCard(pokemon) {
 }
 
 function closeBigCard() {
-  document.getElementById("big-card-overlay").classList.add("d-none");
-  document.body.style.overflow = "auto";
+    document.getElementById("big-card-overlay").classList.add("d-none");
+    document.body.style.overflow = "auto";
 
-  setTimeout(() => {
-    window.dispatchEvent(new Event('scroll'));
-  }, 100);
+    setTimeout(() => {
+        window.dispatchEvent(new Event('scroll'));
+    }, 100);
+}
+
+function createEvolutionHTML(evoList) {
+    let evoHTML = "";
+    for (let i = 0; i < evoList.length; i++) {
+        const evo = evoList[i];
+        evoHTML += `
+      <div class="evo-entry">
+        <img src="${evo.img}" class="evo-img" alt="${evo.name}">
+        <p class="evo-name">${evo.name.toUpperCase()}</p>
+      </div>
+    `;
+    }
+    return evoHTML;
 }
 
 window.addEventListener("scroll", () => {
-   const scrollBottom = (window.innerHeight + window.scrollY) / document.body.scrollHeight > 0.95;
+    const scrollBottom = (window.innerHeight + window.scrollY) / document.body.scrollHeight > 0.95;
     const btn = document.getElementById("scroll-top-btn");
     // Visisble Scrol to Top Buttton
     if (window.scrollY > 300) {
@@ -193,22 +221,8 @@ window.addEventListener("scroll", () => {
     } else {
         btn.classList.add("d-none");
     }
-  // Scroll forever
+    // Scroll forever
     if (scrollBottom && !isLoading && !isSearching) {
-    loadMorePokemons();
-}
+        loadMorePokemons();
+    }
 });
-
-function createEvolutionHTML(evoList) {
-  let evoHTML = "";
-  for (let i = 0; i < evoList.length; i++) {
-    const evo = evoList[i];
-    evoHTML += `
-      <div class="evo-entry">
-        <img src="${evo.img}" class="evo-img" alt="${evo.name}">
-        <p class="evo-name">${evo.name.toUpperCase()}</p>
-      </div>
-    `;
-  }
-  return evoHTML;
-}
