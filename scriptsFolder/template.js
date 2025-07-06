@@ -27,7 +27,7 @@ function getTemplate(section) {
         </footer>
         `;
   }
-  return ""; // Fallback for security 
+  return ""; 
 }
 
 function getMiniCardTemplate(pokemon) {
@@ -48,7 +48,6 @@ function getMiniCardTemplate(pokemon) {
     </div>
   `;
 }
-
 
 function getBigCardTemplate(pokemon, weaknessText, evoList) {
   const evoHTML = createEvolutionHTML(evoList);
