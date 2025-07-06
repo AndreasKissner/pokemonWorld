@@ -19,7 +19,6 @@ const typeColors = {
     fairy: "#D685AD"
 };
 
-
 let isSearching = false;
 let currentBigCardIndex = 0;
 let startIndex = 20;
@@ -118,38 +117,49 @@ async function resetSearch() {
     renderMiniCard();
 }
 
-
 async function loadAllPokemonList() {
     const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0");
     const data = await response.json();
-    allPokemonList = data.results; // [{name, url}, ...]
+    allPokemonList = data.results; 
 }
 
 async function renderBigCardDirect(pokemonId) {
-    let found = allPokemons.find(p => p.id === pokemonId);
-    if (!found) {
-        try {
-            const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
-            found = await loadPokemonDetails(url);
-            allPokemons.push(found);
-        } catch (err) {
-            console.warn("Fehler beim Nachladen:", err);
-            return;
-        }
+  let index = allPokemons.findIndex(p => p.id === pokemonId);
+
+  if (index === -1) {
+    try {
+      const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
+      const found = await loadPokemonDetails(url);
+      found.weaknesses = await loadWeakness(found);
+      found.evolutions = await loadEvolution(found);
+      allPokemons.push(found);
+      index = allPokemons.length - 1;
+    } catch (err) {
+      console.warn("Error by loading:", err);
+      return;
     }
-    renderBigCard(found);
+  }
+
+  renderBigCardByIndex(index);
+}  
+
+
+function showPreviousPokemon(currentId) {
+  const index = allPokemons.findIndex(p => p.id === currentId);
+  if (index !== -1) {
+    const prevIndex = (index - 1 + allPokemons.length) % allPokemons.length;
+    renderBigCardByIndex(prevIndex);
+  }
 }
 
-async function showNextPokemon(currentId) {
-    const nextId = currentId + 1;
-    await renderBigCardDirect(nextId);
+
+function showNextPokemon(currentId) {
+  const index = allPokemons.findIndex(p => p.id === currentId);
+  if (index >= 0 && index < allPokemons.length - 1) {
+    renderBigCardByIndex(index + 1);
+  }
 }
 
-async function showPreviousPokemon(currentId) {
-    const prevId = currentId - 1;
-    if (prevId < 1) return;
-    await renderBigCardDirect(prevId);
-}
 
 function resetALLPokemon() {
     location.reload();
@@ -232,8 +242,6 @@ function scrollToTop() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./scriptsFolder/service-worker.js')
-      .then(reg => console.log('Service Worker registered', reg))
-      .catch(err => console.error('Service Worker error', err));
+    navigator.serviceWorker.register('./scriptsFolder/service-worker.js');
   });
 }
