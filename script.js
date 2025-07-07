@@ -1,23 +1,3 @@
-const typeColors = {
-    normal: "#A8A77A",
-    fire: "#EE8130",
-    water: "#6390F0",
-    electric: "#F7D02C",
-    grass: "#7AC74C",
-    ice: "#96D9D6",
-    fighting: "#C22E28",
-    poison: "#A33EA1",
-    ground: "#E2BF65",
-    flying: "#A98FF3",
-    psychic: "#F95587",
-    bug: "#A6B91A",
-    rock: "#B6A136",
-    ghost: "#735797",
-    dragon: "#6F35FC",
-    dark: "#705746",
-    steel: "#B7B7CE",
-    fairy: "#D685AD"
-};
 
 let isSearching = false;
 let currentBigCardIndex = 0;
@@ -91,9 +71,12 @@ function initSearch() {
 }
 
 async function handleSearch(query) {
+    const loadMoreBtn = document.getElementById("load-more-btn");
     if (query.length >= 3) {
+        if (loadMoreBtn) loadMoreBtn.classList.add("d-none");
         await searchPokemons(query);
     } else {
+        if (loadMoreBtn) loadMoreBtn.classList.remove("d-none");
         await resetSearch();
     }
 }
@@ -110,11 +93,12 @@ async function searchPokemons(query) {
 }
 
 async function resetSearch() {
-    isSearching = false;
-    allPokemons = [];
-    document.getElementById("mini-card-content").innerHTML = "";
-    await loadInitPokemons();
-    renderMiniCard();
+  isSearching = false;
+  document.getElementById("input-search").value = "";
+  allPokemons = [];
+  document.getElementById("mini-card-content").innerHTML = "";
+  await loadInitPokemons();
+  renderMiniCard();
 }
 
 async function loadAllPokemonList() {
@@ -125,7 +109,6 @@ async function loadAllPokemonList() {
 
 async function renderBigCardDirect(pokemonId) {
   let index = allPokemons.findIndex(p => p.id === pokemonId);
-
   if (index === -1) {
     try {
       const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
@@ -139,9 +122,33 @@ async function renderBigCardDirect(pokemonId) {
       return;
     }
   }
-
   renderBigCardByIndex(index);
 }  
+
+
+async function fetchAndStorePokemonById(pokemonId) {
+    const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
+    const pokemon = await loadPokemonDetails(url);
+    if (!pokemon) throw new Error("Pokemon not found");
+    pokemon.weaknesses = await loadWeakness(pokemon);
+    pokemon.evolutions = await loadEvolution(pokemon);
+    allPokemons.push(pokemon);
+    return allPokemons.length - 1;
+}
+
+async function renderBigCardDirect(pokemonId) {
+    let index = allPokemons.findIndex(p => p.id === pokemonId);
+    if (index === -1) {
+        try {
+            index = await fetchAndStorePokemonById(pokemonId);
+        } catch (err) {
+            console.warn("Error by loading:", err);
+            return;
+        }
+    }
+    renderBigCardByIndex(index);
+}
+
 
 
 function showPreviousPokemon(currentId) {
@@ -162,9 +169,13 @@ function showNextPokemon(currentId) {
 
 function resetALLPokemon() {
   isSearching = false;
+  document.getElementById("input-search").value = ""; // Suchfeld leeren
   document.getElementById("mini-card-content").innerHTML = "";
+  document.getElementById("load-more-btn").classList.remove("d-none");
+
   renderMiniCard();
 }
+
 
 async function loadMorePokemons() {
     isLoading = true;
@@ -180,26 +191,26 @@ async function loadMorePokemons() {
     isLoading = false;
 }
 
-function colorMiniCards() {
+function colorMiniCards(pokemonList = allPokemons) {
     const cards = document.querySelectorAll(".card");
     for (let i = 0; i < cards.length; i++) {
         const card = cards[i];
-        const pokemon = allPokemons[i];
+        const pokemon = pokemonList[i];
         if (!pokemon) continue;
         const type = pokemon.types[0].type.name;
-        const bgColor = typeColors[type] || "#ccc";
-        card.style.backgroundColor = bgColor;
+        card.classList.add(`type-${type}`);
     }
 }
 
+
 function colorBigCard(pokemon) {
     const type = pokemon.types[0].type.name;
-    const bgColor = typeColors[type] || "#ccc";
     const bigCard = document.querySelector(".big-card");
     if (bigCard) {
-        bigCard.style.backgroundColor = bgColor;
+        bigCard.classList.add(`type-${type}`);
     }
 }
+
 
 function closeBigCard() {
     document.getElementById("big-card-overlay").classList.add("d-none");

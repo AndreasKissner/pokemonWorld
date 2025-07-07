@@ -24,12 +24,13 @@ async function renderBigCard(pokemon) {
 }
 
 function renderFilteredCards(filteredPokemons) {
-  const container = document.getElementById("mini-card-content");
-  container.innerHTML = "";
-  for (let i = 0; i < filteredPokemons.length; i++) {
-    const miniCard = getMiniCardTemplate(filteredPokemons[i], i);
-    container.insertAdjacentHTML("beforeend", miniCard);
-  }
+    const container = document.getElementById("mini-card-content");
+    container.innerHTML = "";
+    for (let i = 0; i < filteredPokemons.length; i++) {
+        const miniCard = getMiniCardTemplate(filteredPokemons[i]);
+        container.insertAdjacentHTML("beforeend", miniCard);
+    }
+    colorMiniCards(filteredPokemons); 
 }
 
 window.addEventListener("load", async () => {
