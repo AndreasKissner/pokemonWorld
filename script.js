@@ -152,7 +152,6 @@ function showPreviousPokemon(currentId) {
   }
 }
 
-
 function showNextPokemon(currentId) {
   const index = allPokemons.findIndex(p => p.id === currentId);
   if (index !== -1) {
@@ -161,9 +160,10 @@ function showNextPokemon(currentId) {
   }
 }
 
-
 function resetALLPokemon() {
-    location.reload();
+  isSearching = false;
+  document.getElementById("mini-card-content").innerHTML = "";
+  renderMiniCard();
 }
 
 async function loadMorePokemons() {
