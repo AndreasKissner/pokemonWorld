@@ -155,8 +155,9 @@ function showPreviousPokemon(currentId) {
 
 function showNextPokemon(currentId) {
   const index = allPokemons.findIndex(p => p.id === currentId);
-  if (index >= 0 && index < allPokemons.length - 1) {
-    renderBigCardByIndex(index + 1);
+  if (index !== -1) {
+    const nextIndex = (index + 1) % allPokemons.length;
+    renderBigCardByIndex(nextIndex);
   }
 }
 
